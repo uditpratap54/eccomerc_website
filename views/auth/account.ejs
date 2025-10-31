@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Account</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <%- include('../partials/navbar') %>
+    <main class="container">
+      <section class="card" style="max-width:640px; margin:24px auto;">
+        <h2>My Account</h2>
+        <p class="muted">Manage your profile</p>
+        <div style="margin-top:12px;">
+          <p><strong>Name:</strong> <%= user.name %></p>
+          <p><strong>Email:</strong> <%= user.email %></p>
+        </div>
+      </section>
+    </main>
+    <%- include('../partials/footer') %>
+  </body>
+</html>

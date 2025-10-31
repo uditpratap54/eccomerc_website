@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= product.name %> • Details</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+    <main class="container">
+      <section>
+        <div class="product-card" style="max-width:720px; margin:0 auto;">
+          <img src="<%= product.image %>" alt="<%= product.name %>" />
+          <h2 style="margin-top:12px;"><%= product.name %></h2>
+          <p><%= product.category || '—' %> • ₹<%= product.price || 'NA' %></p>
+          <% if (product.description) { %>
+            <p style="color:#6b7280;"><%= product.description %></p>
+          <% } %>
+          <p style="color:#6b7280;">SKU: <%= product.sku || '—' %> • In stock: <%= product.inStock ? 'Yes' : 'No' %></p>
+          <hr />
+          <h3>Available at</h3>
+          <p>
+            <a href="/shops/<%= product.shop._id %>"><%= product.shop.name %></a><br />
+            <%= product.shop.address %>, <%= product.shop.city %>
+          </p>
+          <div class="actions" style="margin-top:8px;">
+            <a class="btn" href="tel:<%= product.shop.phone %>">Call <%= product.shop.phone %></a>
+            <% if (product.shop && product.shop.location && product.shop.location.coordinates && product.shop.location.coordinates.length === 2) { %>
+              <a class="btn secondary" href="https://www.google.com/maps/search/?api=1&query=<%= product.shop.location.coordinates[1] %>,<%= product.shop.location.coordinates[0] %>" target="_blank">Directions</a>
+            <% } else { %>
+              <a class="btn secondary" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(product.shop.address + ', ' + (product.shop.city||'')) %>" target="_blank">Directions</a>
+            <% } %>
+          </div>
+        </div>
+      </section>
+    </main>
+    <%- include('partials/footer') %>
+  </body>
+  </html>

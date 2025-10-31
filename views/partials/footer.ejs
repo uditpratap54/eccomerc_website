@@ -1,0 +1,19 @@
+<footer class="footer">
+  <div class="container">
+    <p>&copy; <%= new Date().getFullYear() %> City Directory</p>
+    <nav class="footer-links">
+      <a href="/">Home</a>
+      <a href="/search">Search</a>
+      <a href="/cities/new">Add City</a>
+      <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+        <a href="/account">Account</a>
+      <% } else { %>
+        <a href="/login">Login</a>
+      <% } %>
+    </nav>
+  </div>
+</footer>
+<script src="/js/app.js"></script>
+<script>
+  window.__FLASH__ = <%- JSON.stringify(typeof flash !== 'undefined' ? flash : null) %>;
+</script>

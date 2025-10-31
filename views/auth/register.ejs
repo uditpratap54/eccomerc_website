@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <%- include('../partials/navbar') %>
+    <main class="container">
+      <section class="card" style="max-width:520px; margin:24px auto;">
+        <h2 style="margin-bottom:12px;">Create Account</h2>
+        <% if (flash && flash.type==='error') { %>
+          <div class="alert error"><%= flash.message %></div>
+        <% } %>
+        <form action="/register" method="post" class="form-grid">
+          <label>Name</label>
+          <input type="text" name="name" placeholder="Your name" required />
+
+          <label>Email</label>
+          <input type="email" name="email" placeholder="you@example.com" required />
+
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Choose a strong password" required />
+
+          <label>Confirm Password</label>
+          <input type="password" name="confirm" placeholder="Repeat password" required />
+
+          <button type="submit" class="btn" style="margin-top:12px;">Register</button>
+        </form>
+        <p class="muted" style="margin-top:8px;">Already have an account? <a href="/login">Login</a></p>
+      </section>
+    </main>
+    <%- include('../partials/footer') %>
+  </body>
+</html>

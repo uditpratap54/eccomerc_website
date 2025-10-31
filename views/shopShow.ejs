@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= shop.name %></title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+    <main class="container">
+      <section>
+        <h2><%= shop.name %></h2>
+        <p><%= shop.address %>, <%= shop.city %></p>
+        <div class="actions" style="margin: 8px 0;">
+          <% if (shop.phone) { %>
+            <a class="btn" href="tel:<%= shop.phone %>" aria-label="Call <%= shop.name %>">Call</a>
+          <% } %>
+          <% if (shop.location && shop.location.coordinates && shop.location.coordinates.length === 2) { %>
+            <a class="btn secondary" href="https://www.google.com/maps/search/?api=1&query=<%= shop.location.coordinates[1] %>,<%= shop.location.coordinates[0] %>" target="_blank" aria-label="Directions to <%= shop.name %>">Directions</a>
+          <% } else { %>
+            <a class="btn secondary" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(shop.address + ', ' + (shop.city||'')) %>" target="_blank" aria-label="Directions to <%= shop.name %>">Directions</a>
+          <% } %>
+        </div>
+        <% if (shop.whatsapp) { %>
+          <p>WhatsApp: <a href="https://wa.me/<%= shop.whatsapp.replace('+','') %>" target="_blank"><%= shop.whatsapp %></a></p>
+        <% } %>
+        <% if (shop.location && shop.location.coordinates && shop.location.coordinates.length === 2) { %>
+          <p>
+            <a href="https://www.google.com/maps/search/?api=1&query=<%= shop.location.coordinates[1] %>,<%= shop.location.coordinates[0] %>" target="_blank">Open in Maps</a>
+          </p>
+        <% } %>
+        <% if (shop.openingHours) { %><p>Timing: <%= shop.openingHours %></p><% } %>
+
+        <div style="margin:12px 0;">
+          <% if (shop.location && shop.location.coordinates && shop.location.coordinates.length === 2) { %>
+            <iframe
+              src="https://www.google.com/maps?q=<%= shop.location.coordinates[1] %>,<%= shop.location.coordinates[0] %>&output=embed"
+              width="100%"
+              height="260"
+              style="border:0; border-radius:8px;"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          <% } else { %>
+            <iframe
+              src="https://www.google.com/maps?q=<%= encodeURIComponent(shop.address + ', ' + (shop.city||'')) %>&output=embed"
+              width="100%"
+              height="260"
+              style="border:0; border-radius:8px;"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          <% } %>
+        </div>
+
+        <h3>Products</h3>
+        <div class="grid">
+          <% if (products && products.length) { %>
+            <% products.forEach(function(product){ %>
+              <div class="product-card">
+                <img src="<%= product.image %>" alt="<%= product.name %>" />
+                <h4><a href="/products/<%= product._id %>"><%= product.name %></a></h4>
+                <p><%= product.category || '—' %> • ₹<%= product.price || 'NA' %></p>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p>No products listed.</p>
+          <% } %>
+        </div>
+      </section>
+      <% if (shop && (shop.phone || shop.address)) { %>
+        <div class="sticky-actions">
+          <% if (shop.phone) { %>
+            <a class="btn" href="tel:<%= shop.phone %>" aria-label="Call <%= shop.name %>">Call</a>
+          <% } %>
+          <% if (shop.location && shop.location.coordinates && shop.location.coordinates.length === 2) { %>
+            <a class="btn secondary" href="https://www.google.com/maps/search/?api=1&query=<%= shop.location.coordinates[1] %>,<%= shop.location.coordinates[0] %>" target="_blank" aria-label="Directions to <%= shop.name %>">Directions</a>
+          <% } else { %>
+            <a class="btn secondary" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(shop.address + ', ' + (shop.city||'')) %>" target="_blank" aria-label="Directions to <%= shop.name %>">Directions</a>
+          <% } %>
+        </div>
+      <% } %>
+    </main>
+    <%- include('partials/footer') %>
+  </body>
+</html>

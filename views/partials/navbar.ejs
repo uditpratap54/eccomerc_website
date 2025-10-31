@@ -1,0 +1,31 @@
+<header class="navbar">
+  <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+    <a class="brand" href="/">City Directory</a>
+    <form action="/search" method="get" style="display:flex; gap:8px; flex:1; max-width:600px;">
+      <select name="city" style="min-width:140px;">
+        <option value="">All</option>
+        <option>Delhi</option>
+        <option>Mumbai</option>
+        <option>Bengaluru</option>
+        <option>Kolkata</option>
+        <option>Chennai</option>
+        <option>Bareilly</option>
+      </select>
+      <input type="text" name="q" placeholder="Search products" style="flex:1;" />
+      <button type="submit">Search</button>
+    </form>
+    <nav style="display:flex; gap:12px; align-items:center;">
+      <a href="/">Home</a>
+      <a href="/search">Search</a>
+      <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+        <span class="muted">Hello, <%= currentUser.name %></span>
+        <a href="/account">Account</a>
+        <a href="/logout" class="btn secondary" style="padding:6px 10px;">Logout</a>
+      <% } else { %>
+        <a href="/login">Login</a>
+        <a href="/register" class="btn" style="padding:6px 10px;">Register</a>
+      <% } %>
+    </nav>
+  </div>
+  <hr />
+</header>

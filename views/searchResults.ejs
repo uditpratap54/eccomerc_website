@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Results</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar') %>
+    <main class="container">
+      <section>
+        <h2>Search Results</h2>
+        <form action="/search" method="get" class="filters-bar">
+          <input type="hidden" name="page" value="<%= page || 1 %>" />
+          <div class="filters-row">
+            <select name="city">
+              <option value="">All Cities</option>
+              <option value="Delhi" <%= city==='Delhi'?'selected':'' %>>Delhi</option>
+              <option value="Mumbai" <%= city==='Mumbai'?'selected':'' %>>Mumbai</option>
+              <option value="Bengaluru" <%= city==='Bengaluru'?'selected':'' %>>Bengaluru</option>
+              <option value="Kolkata" <%= city==='Kolkata'?'selected':'' %>>Kolkata</option>
+              <option value="Chennai" <%= city==='Chennai'?'selected':'' %>>Chennai</option>
+              <option value="Bareilly" <%= city==='Bareilly'?'selected':'' %>>Bareilly</option>
+            </select>
+            <input type="text" name="q" value="<%= q %>" placeholder="Keyword" />
+            <select name="category">
+              <option value="" <%= !category?'selected':'' %>>All</option>
+              <option value="kirana" <%= category==='kirana'?'selected':'' %>>Kirana</option>
+              <option value="snacks" <%= category==='snacks'?'selected':'' %>>Snacks</option>
+              <option value="toiletries" <%= category==='toiletries'?'selected':'' %>>Toiletries</option>
+              <option value="beverages" <%= category==='beverages'?'selected':'' %>>Beverages</option>
+              <option value="dairy" <%= category==='dairy'?'selected':'' %>>Dairy</option>
+              <option value="household" <%= category==='household'?'selected':'' %>>Household</option>
+            </select>
+            <input type="number" name="minPrice" value="<%= typeof minPrice!=='undefined'?minPrice:'' %>" placeholder="Min" />
+            <input type="number" name="maxPrice" value="<%= typeof maxPrice!=='undefined'?maxPrice:'' %>" placeholder="Max" />
+            <select name="sort">
+              <option value="" <%= !sort?'selected':'' %>>Relevance</option>
+              <option value="price_asc" <%= sort==='price_asc'?'selected':'' %>>Price: Low to High</option>
+              <option value="price_desc" <%= sort==='price_desc'?'selected':'' %>>Price: High to Low</option>
+              <option value="name_asc" <%= sort==='name_asc'?'selected':'' %>>Name: A–Z</option>
+              <option value="newest" <%= sort==='newest'?'selected':'' %>>Newest</option>
+            </select>
+            <button type="submit">Apply</button>
+            <a class="btn secondary" href="/search">Clear</a>
+          </div>
+        </form>
+
+        <% const mapQuery = (city && city.trim()) ? city.trim() : 'India'; %>
+        <div class="card" style="margin: 12px 0;">
+          <h3 style="margin-bottom:8px;">Map: <%= mapQuery %></h3>
+          <div style="border-radius:8px; overflow:hidden;">
+            <iframe
+              id="cityMapIframe"
+              src="https://www.google.com/maps?q=<%= encodeURIComponent(mapQuery) %>&output=embed"
+              width="100%"
+              height="260"
+              style="border:0;"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
+          <div class="actions" style="margin-top:8px;">
+            <a id="cityMapOpen" class="btn secondary" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(mapQuery) %>" target="_blank">Open in Maps</a>
+          </div>
+        </div>
+
+        <div class="grid">
+          <% if (products && products.length) { %>
+            <% products.forEach(function(product){ %>
+              <div class="product-card">
+                <img src="<%= product.image %>" alt="<%= product.name %>" />
+                <h4><a href="/products/<%= product._id %>"><%= product.name %></a></h4>
+                <p><%= product.category || '—' %> • ₹<%= typeof product.price==='number' ? product.price.toLocaleString('en-IN') : 'NA' %></p>
+                <p>
+                  Available at:
+                  <a href="/shops/<%= product.shop._id %>"><%= product.shop.name %></a><br/>
+                  <small style="color:#6b7280;"> <%= product.shop.address %>, <%= product.shop.city %> </small>
+                </p>
+                <div class="actions">
+                  <a class="btn" href="tel:<%= product.shop.phone %>" aria-label="Call <%= product.shop.name %>">Call</a>
+                  <% if (product.shop && product.shop.address) { %>
+                    <a class="btn secondary" href="https://www.google.com/maps/search/?api=1&query=<%= encodeURIComponent(product.shop.address + ', ' + (product.shop.city||'')) %>" target="_blank" aria-label="Directions to <%= product.shop.name %>">Directions</a>
+                  <% } %>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p>No products found — try changing filters or search terms.</p>
+          <% } %>
+        </div>
+
+        <% if (q || city || category || typeof minPrice!=='undefined' || typeof maxPrice!=='undefined') { %>
+          <div class="badges" style="margin-top:8px;">
+            <% if (q) { %><span class="badge">Keyword: <%= q %></span><% } %>
+            <% if (city) { %><span class="badge">City: <%= city %></span><% } %>
+            <% if (category) { %><span class="badge">Category: <%= category %></span><% } %>
+            <% if (typeof minPrice!=='undefined') { %><span class="badge">Min: ₹<%= minPrice %></span><% } %>
+            <% if (typeof maxPrice!=='undefined') { %><span class="badge">Max: ₹<%= maxPrice %></span><% } %>
+          </div>
+        <% } %>
+
+        <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+          <div class="pagination">
+            <% const prevPage = page > 1 ? page - 1 : 1; %>
+            <% const nextPage = page < totalPages ? page + 1 : totalPages; %>
+            <a class="btn" href="/search?q=<%= encodeURIComponent(q||'') %>&city=<%= encodeURIComponent(city||'') %>&category=<%= encodeURIComponent(category||'') %>&minPrice=<%= typeof minPrice!=='undefined'?minPrice:'' %>&maxPrice=<%= typeof maxPrice!=='undefined'?maxPrice:'' %>&sort=<%= encodeURIComponent(sort||'') %>&page=<%= prevPage %>">Prev</a>
+            <span>Page <%= page %> of <%= totalPages %></span>
+            <a class="btn" href="/search?q=<%= encodeURIComponent(q||'') %>&city=<%= encodeURIComponent(city||'') %>&category=<%= encodeURIComponent(category||'') %>&minPrice=<%= typeof minPrice!=='undefined'?minPrice:'' %>&maxPrice=<%= typeof maxPrice!=='undefined'?maxPrice:'' %>&sort=<%= encodeURIComponent(sort||'') %>&page=<%= nextPage %>">Next</a>
+          </div>
+        <% } %>
+      </section>
+    </main>
+    <%- include('partials/footer') %>
+  </body>
+</html>

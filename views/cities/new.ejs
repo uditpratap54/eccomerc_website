@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add City</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <%- include('../partials/navbar') %>
+    <main class="container">
+      <section class="card" style="max-width:520px; margin:24px auto;">
+        <h2 style="margin-bottom:12px;">Add City</h2>
+        <% if (flash && flash.type==='error') { %>
+          <div class="alert error"><%= flash.message %></div>
+        <% } %>
+        <form action="/cities" method="post" class="form-grid">
+          <label>City Name</label>
+          <input type="text" name="name" placeholder="e.g. Bareilly" required />
+          <button type="submit" class="btn" style="margin-top:12px;">Save</button>
+        </form>
+        <p class="muted" style="margin-top:8px;">City list homepage par update ho jayegi.</p>
+      </section>
+    </main>
+    <%- include('../partials/footer') %>
+  </body>
+</html>
