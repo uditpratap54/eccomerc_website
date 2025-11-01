@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ secrets.HEROKU_API_KEY && secrets.HEROKU_APP_NAME && secrets.HEROKU_EMAIL }}
+    if: ${{ secrets.HEROKU_API_KEY && secrets.HEROKU_APP_NAME && secrets.HEROKU_EMAIL && secrets.MONGODB_URI && secrets.SESSION_SECRET }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
