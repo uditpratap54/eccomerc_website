@@ -1,4 +1,7 @@
-require('dotenv').config();
+// Load .env only in development to avoid overriding Render env vars
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
