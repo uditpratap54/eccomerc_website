@@ -196,3 +196,38 @@ For support, email support@citydirectory.com or create an issue in the repositor
 ---
 
 **Made with ❤️ for local businesses across India**
+## Deploy to Render
+
+This project includes a `render.yaml` to deploy a Node/Express web service on Render.
+
+### Prerequisites
+- A GitHub repository with this code.
+- MongoDB Atlas connection string (or a public MongoDB server).
+
+### One‑click Deploy via Blueprint
+1. Sign in at https://render.com and connect your GitHub.
+2. Click New → Blueprint and select this repo.
+3. Confirm the settings from `render.yaml`:
+   - Type: `web`, Env: `node`
+   - Build: `npm ci && npm run build`
+   - Start: `npm start` (runs `node server.js`)
+   - Health check path: `/`
+4. Create the service.
+
+### Required Environment Variables (Render → Service → Environment)
+- `MONGODB_URI` → your Atlas connection string, e.g.
+  `mongodb+srv://<user>:<pass>@<cluster>/<db>?retryWrites=true&w=majority`
+- `SESSION_SECRET` → strong random string (generate locally: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`)
+- `NODE_ENV` → `production` (predefined in `render.yaml`)
+- `ALLOWED_ORIGINS` → `https://<your-app-name>.onrender.com` (predefined; update if your service name differs)
+
+Render automatically provides `PORT`; the app already binds to `process.env.PORT`.
+
+### Verify
+- Open the live URL: `https://<your-app-name>.onrender.com`.
+- Logs: Render Dashboard → your service → Logs.
+
+### Troubleshooting
+- Mongo connection errors: ensure Atlas user exists, IP allowlist permits your app (testing: `0.0.0.0/0`), and the `<db>` name is correct.
+- 502/Crash: check logs; verify `MONGODB_URI` and `SESSION_SECRET` are set; the start command must be `npm start`.
+- CORS errors: update `ALLOWED_ORIGINS` to your Render URL.

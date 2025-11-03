@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: eccomerce-website
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ALLOWED_ORIGINS
+        value: https://eccomerce-website.onrender.com
+      - key: MONGODB_URI
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
