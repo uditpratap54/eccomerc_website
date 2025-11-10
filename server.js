@@ -1,5 +1,6 @@
 // Load .env only in development (never in production on Render)
-if (process.env.NODE_ENV === 'development') {
+// Don't load dotenv on Render even if NODE_ENV accidentally set to development
+if (process.env.NODE_ENV === 'development' && !process.env.RENDER_EXTERNAL_URL) {
   require('dotenv').config();
 }
 const express = require('express');
@@ -14,8 +15,9 @@ const morgan = require('morgan');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const IS_PROD = NODE_ENV === 'production';
+const IS_RENDER = !!process.env.RENDER_EXTERNAL_URL;
+const NODE_ENV = process.env.NODE_ENV || (IS_RENDER ? 'production' : 'development');
+const IS_PROD = NODE_ENV === 'production' || IS_RENDER;
 
 // Security middleware
 app.use(helmet({
