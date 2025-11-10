@@ -200,6 +200,12 @@ For support, email support@citydirectory.com or create an issue in the repositor
 
 This project includes a `render.yaml` to deploy a Node/Express web service on Render.
 
+### One‑click Deploy Button
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+
+Click this button from your GitHub README view, and Render will detect this repo automatically and open the Blueprint deploy flow.
+
 ### Prerequisites
 - A GitHub repository with this code.
 - MongoDB Atlas connection string (or a public MongoDB server).

@@ -2,6 +2,7 @@ services:
   - type: web
     name: eccomerce-website
     env: node
+    rootDir: .
     plan: free
     region: oregon
     buildCommand: npm ci && npm run build
@@ -9,6 +10,8 @@ services:
     autoDeploy: true
     healthCheckPath: /
     envVars:
+      - key: NODE_VERSION
+        value: 18.18.0
       - key: NODE_ENV
         value: production
       - key: ALLOWED_ORIGINS
