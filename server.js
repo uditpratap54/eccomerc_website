@@ -1,5 +1,5 @@
-// Load .env only in development to avoid overriding Render env vars
-if (process.env.NODE_ENV !== 'production') {
+// Load .env only in development (never in production on Render)
+if (process.env.NODE_ENV === 'development') {
   require('dotenv').config();
 }
 const express = require('express');
@@ -15,6 +15,7 @@ const morgan = require('morgan');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
+const IS_PROD = NODE_ENV === 'production';
 
 // Security middleware
 app.use(helmet({
@@ -66,7 +67,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/citydirectory',
+    mongoUrl: process.env.MONGODB_URI || (IS_PROD ? undefined : 'mongodb://127.0.0.1:27017/citydirectory'),
     touchAfter: 24 * 3600 // lazy session update
   }),
   cookie: { 
@@ -111,20 +112,20 @@ app.use('/cities', require('./routes/cities'));
 app.use(notFound);
 app.use(errorHandler);
 
-// MongoDB connection and simple seeding
-const MONGODB_URI = process.env.MONGODB_URI || '';
+// MongoDB connection
+const MONGODB_URI = process.env.MONGODB_URI || (IS_PROD ? '' : 'mongodb://127.0.0.1:27017/citydirectory');
 
 // MongoDB connection with error handling
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/citydirectory', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    if (IS_PROD && !process.env.MONGODB_URI) {
+      throw new Error('MONGODB_URI is not set in production. Configure it in Render Environment Variables.');
+    }
+    const conn = await mongoose.connect(MONGODB_URI);
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
-    if (NODE_ENV === 'production') {
+    if (IS_PROD) {
       process.exit(1);
     }
   }
@@ -148,8 +149,11 @@ process.on('SIGINT', async () => {
 
 async function initializeApp() {
   try {
-    if (!process.env.MONGODB_URI) {
-      console.warn('MONGODB_URI not set. Attempting local connection at mongodb://127.0.0.1:27017/citydirectory');
+    if (!process.env.MONGODB_URI && !IS_PROD) {
+      console.warn('MONGODB_URI not set. Using local mongodb://127.0.0.1:27017/citydirectory');
+    }
+    if (IS_PROD && !process.env.MONGODB_URI) {
+      throw new Error('MONGODB_URI missing in production. Set it in Render before starting.');
     }
     await connectDB();
     console.log('✅ Application initialized successfully');
