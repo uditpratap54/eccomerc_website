@@ -120,15 +120,19 @@ app.use(notFound);
 app.use(errorHandler);
 
 // MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI || (IS_PROD ? '' : 'mongodb://127.0.0.1:27017/citydirectory');
+// Using mongoUrl computed above; no localhost fallback in production
 
 // MongoDB connection with error handling
 const connectDB = async () => {
   try {
-    if (IS_PROD && !process.env.MONGODB_URI) {
+    if (IS_PROD && !mongoUrl) {
       throw new Error('MONGODB_URI is not set in production. Configure it in Render Environment Variables.');
     }
-    const conn = await mongoose.connect(MONGODB_URI);
+    if (!IS_PROD && !mongoUrl) {
+      console.warn('MONGODB_URI not set. Using local mongodb://127.0.0.1:27017/citydirectory');
+      mongoUrl = 'mongodb://127.0.0.1:27017/citydirectory';
+    }
+    const conn = await mongoose.connect(mongoUrl);
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
