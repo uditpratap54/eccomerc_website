@@ -62,12 +62,17 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 // Session configuration with MongoDB store
+// Enforce MongoDB URI for session store; no localhost fallback in production
+if (IS_PROD && !process.env.MONGODB_URI) {
+  throw new Error('SESSION_STORE requires MONGODB_URI in production. Set it in Render Environment Variables.');
+}
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback_secret',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI || (IS_PROD ? undefined : 'mongodb://127.0.0.1:27017/citydirectory'),
+    mongoUrl: MONGODB_URI,
     touchAfter: 24 * 3600 // lazy session update
   }),
   cookie: { 
